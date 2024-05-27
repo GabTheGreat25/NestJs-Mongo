@@ -1,11 +1,10 @@
-export default {
+export const RESOURCE = {
   AUTH: "Auth",
-  DEV: "dev",
   PRODUCTION: "production",
   DEVELOPMENT: "development",
+  INTERNAL_SERVER_ERROR: "Internal server error",
   API: "/api/",
   V1: "v1/",
-  VALIDATION_ERROR: "ValidationError",
   IMAGES: "projectImages",
   ID: "_id",
   ROLES: "roles",

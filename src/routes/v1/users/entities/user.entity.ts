@@ -1,12 +1,15 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-@Schema()
-export class User {
-  @ApiProperty({ description: "User Name", example: "Jhon Doe" })
+import { Document } from "mongoose";
+import { RESOURCE } from "src/constants";
+
+@Schema({ timestamps: true, discriminatorKey: RESOURCE.ROLE })
+export class User extends Document {
+  @ApiProperty({ description: "User Name", example: "John Doe" })
   @Prop({ required: true })
   name: string;
 
-  @ApiProperty({ description: "User Email", example: "jhon.doe@gmail.com" })
+  @ApiProperty({ description: "User Email", example: "john.doe@gmail.com" })
   @Prop({ unique: true, required: true })
   email: string;
 

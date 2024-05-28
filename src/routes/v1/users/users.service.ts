@@ -2,12 +2,19 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User } from "./entities/user.entity";
+import { Admin, Employee, Customer } from "./discriminators";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { ROLE } from "src/constants";
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Admin.name) private adminModel: Model<Admin>,
+    @InjectModel(Employee.name) private employeeModel: Model<Employee>,
+    @InjectModel(Customer.name) private customerModel: Model<Customer>,
+  ) {}
 
   getAll() {
     return this.userModel.find({ deleted: false });
@@ -21,9 +28,18 @@ export class UsersService {
     return this.userModel.findOne({ _id, deleted: false });
   }
 
-  add(createUserDto: CreateUserDto) {
-    const newUser = new this.userModel(createUserDto);
-    return newUser.save();
+  async add(createUserDto: CreateUserDto) {
+    const modelToUse =
+      createUserDto.role === ROLE.ADMIN
+        ? this.adminModel
+        : createUserDto.role === ROLE.EMPLOYEE
+          ? this.employeeModel
+          : createUserDto.role === ROLE.CUSTOMER
+            ? this.customerModel
+            : this.userModel;
+
+    const newUser = new modelToUse(createUserDto);
+    return await newUser.save();
   }
 
   update(_id: string, updateUserDto: UpdateUserDto) {

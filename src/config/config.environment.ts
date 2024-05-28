@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import { RESOURCE } from "../constants/index";
+import { RESOURCE } from "../constants";
 
 dotenv.config({
   path: "./src/config/.env",

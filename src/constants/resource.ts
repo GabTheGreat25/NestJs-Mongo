@@ -7,7 +7,7 @@ export const RESOURCE = {
   V1: "/v1",
   IMAGES: "projectImages",
   ID: "_id",
-  ROLES: "roles",
+  ROLE: "role",
   TESTS: "tests",
   TEST: "test",
   TEST_CHILD: "testChild",

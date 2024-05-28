@@ -13,9 +13,8 @@ import {
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { responseHandler } from "../../../utils/index";
-import { STATUSCODE } from "../../../constants/index";
-import { PATH } from "../../../constants/index";
+import { responseHandler } from "../../../utils";
+import { STATUSCODE, PATH, RESOURCE } from "../../../constants";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -62,7 +61,7 @@ export class UsersController {
     description: "User retrieved successfully",
     type: User,
   })
-  async getUserById(@Param("id") _id: string) {
+  async getUserById(@Param(RESOURCE.ID) _id: string) {
     const data = await this.service.getById(_id);
     return responseHandler(
       data,
@@ -90,7 +89,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({ description: "Invalid Request" })
   async updateUser(
-    @Param("id") _id: string,
+    @Param(RESOURCE.ID) _id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     const data = await this.service.update(_id, updateUserDto);
@@ -102,7 +101,7 @@ export class UsersController {
     description: "User deleted successfully",
     type: User,
   })
-  async deleteUser(@Param("id") _id: string) {
+  async deleteUser(@Param(RESOURCE.ID) _id: string) {
     const data = await this.service.deleteById(_id);
     return responseHandler(
       data?.deleted ? [] : [data],
@@ -115,7 +114,7 @@ export class UsersController {
     description: "User restored successfully",
     type: User,
   })
-  async restoreUser(@Param("id") _id: string) {
+  async restoreUser(@Param(RESOURCE.ID) _id: string) {
     const data = await this.service.restoreById(_id);
     return responseHandler(
       !data?.deleted ? [] : data,
@@ -128,7 +127,7 @@ export class UsersController {
     description: "User force deleted successfully",
     type: User,
   })
-  async forceDeleteUser(@Param("id") _id: string) {
+  async forceDeleteUser(@Param(RESOURCE.ID) _id: string) {
     const data = await this.service.forceDelete(_id);
     const message = !data ? "No User found" : "User force deleted successfully";
     return responseHandler(data, message);

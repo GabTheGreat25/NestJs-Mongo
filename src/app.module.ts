@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AppConfigModule } from "./config/config.module";
 import { MongooseConfigService } from "./config/config.connectDB";
-import { UsersModule } from "./users/users.module";
+import { RoutesModule } from "./routes/routes.module";
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { UsersModule } from "./users/users.module";
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
     }),
-    UsersModule,
+    RoutesModule,
   ],
   controllers: [],
   providers: [],

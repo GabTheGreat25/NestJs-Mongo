@@ -13,11 +13,11 @@ import {
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { responseHandler } from "../utils/index";
-import { STATUSCODE } from "../constants/index";
-import { RESOURCE, PATH } from "../constants/index";
+import { responseHandler } from "../../../utils/index";
+import { STATUSCODE } from "../../../constants/index";
+import { PATH } from "../../../constants/index";
 
-@Controller(RESOURCE.USERS)
+@Controller()
 export class UsersController {
   constructor(private service: UsersService) {}
 

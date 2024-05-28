@@ -3,6 +3,7 @@ import { User, UserSchema } from "../entities/user.entity";
 import { Prop } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { ROLE } from "../../../../constants";
+import { filterBadWords } from "../../../../utils";
 
 @Schema()
 export class Customer extends User {
@@ -10,7 +11,15 @@ export class Customer extends User {
     description: "User Description",
     example: "Full Stack Developer",
   })
-  @Prop({ required: true })
+  @Prop({
+    required: true,
+    validate: {
+      validator: function (value: string) {
+        return filterBadWords(value);
+      },
+      message: "Description contains inappropriate language.",
+    },
+  })
   description: string;
 }
 

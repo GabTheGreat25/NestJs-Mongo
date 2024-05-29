@@ -6,7 +6,7 @@ export const RESOURCE = {
   API: "api",
   V1: "/v1",
   IMAGES: "projectImages",
-  ID: "_id",
+  ID: "id",
   ROLE: "role",
   TESTS: "tests",
   TEST: "test",

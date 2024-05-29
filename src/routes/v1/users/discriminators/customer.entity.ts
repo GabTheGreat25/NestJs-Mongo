@@ -2,8 +2,8 @@ import { Schema, SchemaFactory } from "@nestjs/mongoose";
 import { User, UserSchema } from "../entities/user.entity";
 import { Prop } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-import { ROLE } from "../../../../constants";
-import { filterBadWords } from "../../../../utils";
+import { ROLE } from "src/constants";
+import { filterBadWords } from "src/utils";
 
 @Schema()
 export class Customer extends User {

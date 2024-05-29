@@ -13,8 +13,8 @@ import {
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { responseHandler } from "../../../utils";
-import { STATUSCODE, PATH, RESOURCE } from "../../../constants";
+import { responseHandler } from "src/utils";
+import { STATUSCODE, PATH, RESOURCE } from "src/constants";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,

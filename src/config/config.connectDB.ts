@@ -5,7 +5,7 @@ import {
 } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import ENV from "./config.environment";
-import { STATUSCODE } from "../constants";
+import { STATUSCODE } from "src/constants";
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {

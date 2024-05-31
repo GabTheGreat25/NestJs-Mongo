@@ -9,6 +9,8 @@ import {
   Patch,
   Put,
   Delete,
+  UseInterceptors,
+  UploadedFiles,
 } from "@nestjs/common";
 import { TestsService } from "./tests.service";
 import { CreateTestDto } from "./dto/create-test.dto";
@@ -21,6 +23,8 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Test } from "../tests/entities/test.entity";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import multipleImages from "src/utils/utils.multipleImages";
 
 @ApiTags()
 @Controller()
@@ -72,18 +76,26 @@ export class TestsController {
 
   @Post()
   @UsePipes(new ValidationPipe())
+  @UseInterceptors(FilesInterceptor("image"))
   @ApiCreatedResponse({
     description: "Test created successfully",
     type: Test,
   })
   @ApiBadRequestResponse({ description: "Invalid Request" })
-  async createTest(@Body() createTestDto: CreateTestDto) {
+  async createTest(
+    @Body() createTestDto: CreateTestDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const uploadedImages = await multipleImages(files, []);
+    createTestDto.image = uploadedImages;
+
     const data = await this.service.add(createTestDto);
     return responseHandler([data], "Test created successfully");
   }
 
   @Patch(PATH.EDIT)
   @UsePipes(new ValidationPipe())
+  @UseInterceptors(FilesInterceptor("image"))
   @ApiCreatedResponse({
     description: "Test updated successfully",
     type: Test,
@@ -92,7 +104,16 @@ export class TestsController {
   async updateTest(
     @Param(RESOURCE.ID) _id: string,
     @Body() updateTestDto: UpdateTestDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
+    const oldData = await this.service.getById(_id);
+
+    const uploadNewImages = await multipleImages(
+      files,
+      oldData?.image.map((image) => image.public_id) || [],
+    );
+    updateTestDto.image = uploadNewImages;
+
     const data = await this.service.update(_id, updateTestDto);
     return responseHandler([data], "Test updated successfully");
   }
@@ -131,6 +152,10 @@ export class TestsController {
   async forceDeleteTest(@Param(RESOURCE.ID) _id: string) {
     const data = await this.service.forceDelete(_id);
     const message = !data ? "No Test found" : "Test force deleted successfully";
+    await multipleImages(
+      [],
+      data?.image ? data.image.map((image) => image.public_id) : [],
+    );
     return responseHandler(data, message);
   }
 }

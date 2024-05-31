@@ -10,7 +10,7 @@ export interface ResponsePayload {
 }
 
 export interface UploadImages {
-  public_id?: string;
-  url?: string;
-  originalname?: string;
+  public_id: string;
+  url: string;
+  originalname: string;
 }

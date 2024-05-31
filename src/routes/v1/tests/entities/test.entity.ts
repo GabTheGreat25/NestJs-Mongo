@@ -2,6 +2,7 @@ import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { filterBadWords } from "src/utils";
 import { Document } from "mongoose";
+import { UploadImages } from "src/types";
 
 @Schema({ timestamps: true })
 export class Test extends Document {
@@ -16,6 +17,21 @@ export class Test extends Document {
     },
   })
   message: string;
+
+  @ApiProperty({
+    description: "Uploaded Images",
+    example: [
+      {
+        public_id: "public_id",
+        url: "url",
+        originalname: "originalname",
+      },
+    ],
+  })
+  @Prop({
+    required: true,
+  })
+  image: UploadImages[];
 
   @ApiProperty({ description: "Deleted flag", example: false })
   @Prop({ default: false })

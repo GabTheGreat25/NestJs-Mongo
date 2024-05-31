@@ -1,17 +1,8 @@
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 import { AppConfigModule } from "./config/config.module";
-import { MongooseConfigService } from "./config/config.connectDB";
-import { RoutesModule } from "./routes";
-
+import { RoutesModule } from "./routes/routes.module";
 @Module({
-  imports: [
-    AppConfigModule,
-    MongooseModule.forRootAsync({
-      useClass: MongooseConfigService,
-    }),
-    RoutesModule,
-  ],
+  imports: [AppConfigModule, RoutesModule],
   controllers: [],
   providers: [],
 })

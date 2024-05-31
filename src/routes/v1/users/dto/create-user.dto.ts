@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { UploadImages } from "src/types";
 
 export class CreateUserDto {
   @ApiProperty({ description: "The name of the User", example: "Jhon Doe" })
@@ -19,4 +20,18 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   role: string;
+
+  @ApiProperty({
+    description: "Uploaded Images",
+    example: [
+      {
+        public_id: "public_id",
+        url: "url",
+        originalname: "originalname",
+      },
+    ],
+  })
+  @IsOptional()
+  @IsNotEmpty()
+  image: UploadImages[];
 }

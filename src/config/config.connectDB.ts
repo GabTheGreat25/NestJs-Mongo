@@ -3,7 +3,7 @@ import {
   MongooseModuleOptions,
   MongooseOptionsFactory,
 } from "@nestjs/mongoose";
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import ENV from "./config.environment";
 import { STATUSCODE } from "src/constants";
 

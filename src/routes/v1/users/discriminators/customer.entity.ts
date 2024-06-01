@@ -1,6 +1,5 @@
-import { Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Schema, SchemaFactory, Prop } from "@nestjs/mongoose";
 import { User, UserSchema } from "../entities/user.entity";
-import { Prop } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { ROLE } from "src/constants";
 import { filterBadWords } from "src/utils";

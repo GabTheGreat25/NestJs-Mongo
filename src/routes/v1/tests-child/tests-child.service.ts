@@ -4,7 +4,7 @@ import mongoose, { Model } from "mongoose";
 import { TestsChild } from "./entities/tests-child.entity";
 import { CreateTestsChildDto } from "./dto/create-tests-child.dto";
 import { UpdateTestsChildDto } from "./dto/update-tests-child.dto";
-import { lookup } from "../../../utils";
+import { lookup } from "src/utils";
 import { RESOURCE } from "src/constants";
 
 @Injectable()

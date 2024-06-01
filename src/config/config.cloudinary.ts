@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import ENV from "./config.environment";
+import { ENV } from "src/config";
 
 cloudinary.config({
   cloud_name: ENV.CLOUDINARY_CLOUD_NAME,
@@ -12,4 +12,4 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
 });
 
-export default storage;
+export { storage };

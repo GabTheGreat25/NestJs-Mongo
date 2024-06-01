@@ -5,7 +5,7 @@ import { User } from "./entities/user.entity";
 import { Admin, Employee, Customer } from "./discriminators";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ROLE } from "src/constants";
+import { ROLE, RESOURCE } from "src/constants";
 
 @Injectable()
 export class UsersService {
@@ -26,6 +26,12 @@ export class UsersService {
 
   getById(_id: string) {
     return this.userModel.findOne({ _id, deleted: false });
+  }
+
+  async getEmail(email: string) {
+    return await this.userModel
+      .findOne({ email, deleted: false })
+      .select(RESOURCE.PASSWORD);
   }
 
   async add(createUserDto: CreateUserDto) {

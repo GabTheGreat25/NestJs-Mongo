@@ -4,7 +4,7 @@ import {
   MongooseOptionsFactory,
 } from "@nestjs/mongoose";
 import mongoose from "mongoose";
-import ENV from "./config.environment";
+import { ENV } from "src/config";
 import { STATUSCODE } from "src/constants";
 
 @Injectable()

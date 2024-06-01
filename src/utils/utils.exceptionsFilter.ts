@@ -7,7 +7,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Response } from "express";
-import ENV from "src/config/config.environment";
+import { ENV } from "src/config";
 import { RESOURCE } from "src/constants";
 
 @Catch()

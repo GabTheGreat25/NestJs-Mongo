@@ -1,8 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
-import { UploadImages } from "../types";
+import { UploadImages } from "src/types";
 import { RESOURCE } from "src/constants";
 
-export default async function multipleImages(
+export async function multipleImages(
   files: Express.Multer.File[],
   oldImagePublicIds: string[],
 ): Promise<UploadImages[]> {

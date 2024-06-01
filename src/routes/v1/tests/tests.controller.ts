@@ -15,7 +15,7 @@ import {
 import { TestsService } from "./tests.service";
 import { CreateTestDto } from "./dto/create-test.dto";
 import { UpdateTestDto } from "./dto/update-test.dto";
-import { responseHandler } from "src/utils";
+import { responseHandler, multipleImages } from "src/utils";
 import { STATUSCODE, PATH, RESOURCE } from "src/constants";
 import {
   ApiBadRequestResponse,
@@ -24,7 +24,6 @@ import {
 } from "@nestjs/swagger";
 import { Test } from "../tests/entities/test.entity";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import multipleImages from "src/utils/utils.multipleImages";
 
 @ApiTags()
 @Controller()

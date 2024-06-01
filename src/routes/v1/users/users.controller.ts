@@ -11,6 +11,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -24,13 +25,22 @@ import {
 } from "@nestjs/swagger";
 import { User } from "../users/entities/user.entity";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import multipleImages from "src/utils/utils.multipleImages";
+import { multipleImages } from "src/utils";
+import * as bcrypt from "bcrypt";
+import { JwtService } from "@nestjs/jwt";
+import { JwtAuthGuard, TokenService } from "src/middleware";
+
 @ApiTags()
 @Controller()
 export class UsersController {
-  constructor(private service: UsersService) {}
+  constructor(
+    private service: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({
     description: "All Users retrieved successfully",
     type: User,
@@ -71,6 +81,44 @@ export class UsersController {
       data,
       !data ? "No User found" : "User retrieved successfully",
     );
+  }
+
+  @Post(PATH.LOGIN)
+  @ApiCreatedResponse({
+    description: "User login successfully",
+    type: User,
+  })
+  @ApiBadRequestResponse({ description: "Invalid Request" })
+  async loginUser(@Body() createUserDto: CreateUserDto) {
+    const { email, password } = createUserDto;
+
+    const data = await this.service.getEmail(email);
+
+    if (!data) return responseHandler([], "No User found");
+
+    if (!(await bcrypt.compare(password, data.password))) {
+      return responseHandler([], "Password does not match");
+    }
+
+    const accessToken = this.jwtService.sign({});
+    this.tokenService.setToken(accessToken);
+
+    return responseHandler(data, "User Login successfully", {
+      accessToken,
+    });
+  }
+
+  @Post("logout")
+  @ApiCreatedResponse({
+    description: "User logout successful",
+  })
+  @ApiBadRequestResponse({ description: "Invalid request" })
+  async logoutUser() {
+    const savedToken = this.tokenService.getToken();
+
+    if (savedToken) this.tokenService.blacklistToken();
+
+    return responseHandler([], "User logout successful");
   }
 
   @Post()

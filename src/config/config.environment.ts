@@ -19,4 +19,4 @@ const ENV = {
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "your_api_secret",
 };
 
-export default ENV;
+export { ENV };

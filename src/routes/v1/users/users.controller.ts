@@ -17,7 +17,7 @@ import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { responseHandler } from "src/utils";
-import { STATUSCODE, PATH, RESOURCE } from "src/constants";
+import { STATUSCODE, PATH, RESOURCE, ROLE } from "src/constants";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -28,7 +28,7 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { multipleImages } from "src/utils";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
-import { JwtAuthGuard, TokenService } from "src/middleware";
+import { JwtAuthGuard, TokenService, Roles } from "src/middleware";
 
 @ApiTags()
 @Controller()
@@ -41,6 +41,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN)
   @ApiCreatedResponse({
     description: "All Users retrieved successfully",
     type: User,
@@ -56,6 +57,8 @@ export class UsersController {
   }
 
   @Get(PATH.DELETED)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN)
   @ApiCreatedResponse({
     description: "All Deleted Users retrieved successfully",
     type: User,
@@ -71,6 +74,8 @@ export class UsersController {
   }
 
   @Get(PATH.ID)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN)
   @ApiCreatedResponse({
     description: "User retrieved successfully",
     type: User,
@@ -100,7 +105,7 @@ export class UsersController {
       return responseHandler([], "Password does not match");
     }
 
-    const accessToken = this.jwtService.sign({});
+    const accessToken = this.jwtService.sign({ role: data[RESOURCE.ROLE] });
     this.tokenService.setToken(accessToken);
 
     return responseHandler(data, "User Login successfully", {
@@ -108,7 +113,7 @@ export class UsersController {
     });
   }
 
-  @Post("logout")
+  @Post(PATH.LOGOUT)
   @ApiCreatedResponse({
     description: "User logout successful",
   })
@@ -141,6 +146,8 @@ export class UsersController {
   }
 
   @Patch(PATH.EDIT)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
   @UsePipes(new ValidationPipe())
   @UseInterceptors(FilesInterceptor("image"))
   @ApiCreatedResponse({
@@ -166,6 +173,8 @@ export class UsersController {
   }
 
   @Delete(PATH.DELETE)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
   @ApiCreatedResponse({
     description: "User deleted successfully",
     type: User,
@@ -179,6 +188,8 @@ export class UsersController {
   }
 
   @Put(PATH.RESTORE)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
   @ApiCreatedResponse({
     description: "User restored successfully",
     type: User,
@@ -192,6 +203,8 @@ export class UsersController {
   }
 
   @Delete(PATH.FORCE_DELETE)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
   @ApiCreatedResponse({
     description: "User force deleted successfully",
     type: User,

@@ -2,12 +2,14 @@ import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { TokenService } from "./middleware.verifyToken";
 import { ENV } from "src/config";
+import { Reflector } from "@nestjs/core";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private tokenService: TokenService,
+    private reflector: Reflector,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -18,13 +20,17 @@ export class JwtAuthGuard implements CanActivate {
       ? this.tokenService.isTokenBlacklisted()
         ? false
         : (() => {
-            try {
-              request.user = this.jwtService.verify(token, {
-                secret: ENV.ACCESS_TOKEN_SECRET,
-              });
+            request.user = this.jwtService.verify(token, {
+              secret: ENV.ACCESS_TOKEN_SECRET,
+            });
+
+            const requiredRoles = this.reflector.get<string[]>(
+              "roles",
+              context.getHandler(),
+            );
+
+            if (!requiredRoles || requiredRoles.includes(request.user.role)) {
               return true;
-            } catch (error) {
-              return false;
             }
           })()
       : false;

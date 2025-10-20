@@ -1,11 +1,11 @@
-import { Schema, SchemaFactory, Prop } from "@nestjs/mongoose";
-import { User, UserSchema } from "../entities/user.entity";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { ROLE } from "src/constants";
 import { filterBadWords } from "src/utils";
+import { User, UserSchema } from "../entities/user.entity";
 
 @Schema()
-export class Customer extends User {
+export class Student extends User {
   @ApiProperty({
     description: "User Description",
     example: "Full Stack Developer",
@@ -22,7 +22,7 @@ export class Customer extends User {
   description: string;
 }
 
-export const CustomerSchema = UserSchema.discriminator(
-  ROLE.CUSTOMER,
-  SchemaFactory.createForClass(Customer),
+export const StudentSchema = UserSchema.discriminator(
+  ROLE.STUDENT,
+  SchemaFactory.createForClass(Student),
 );

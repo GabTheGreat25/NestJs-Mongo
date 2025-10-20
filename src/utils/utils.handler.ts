@@ -1,5 +1,5 @@
-import { MetaData, ResponsePayload } from "src/types";
 import { Logger } from "@nestjs/common";
+import { MetaData, ResponsePayload } from "src/types";
 
 const logger = new Logger("ResponseHandler");
 
@@ -8,8 +8,10 @@ export function responseHandler(
   message: string,
   meta: MetaData = {},
 ): ResponsePayload {
+  const isSuccess = data !== null && data !== undefined;
+
   const response = {
-    status: !!data,
+    status: isSuccess ? "success" : "fail",
     data: data || [],
     message: message,
     meta: meta,

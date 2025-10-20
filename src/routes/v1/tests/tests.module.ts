@@ -1,12 +1,13 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { Test, TestSchema } from "./entities/test.entity";
 import {
   TestsChild,
   TestsChildSchema,
 } from "../tests-child/entities/tests-child.entity";
-import { TestsService } from "./tests.service";
+import { TestsChildService } from "../tests-child/tests-child.service";
+import { Test, TestSchema } from "./entities/test.entity";
 import { TestsController } from "./tests.controller";
+import { TestsService } from "./tests.service";
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { TestsController } from "./tests.controller";
       { name: TestsChild.name, schema: TestsChildSchema },
     ]),
   ],
-  providers: [TestsService],
+  providers: [TestsService, TestsChildService],
   controllers: [TestsController],
 })
 export class TestsModule {}

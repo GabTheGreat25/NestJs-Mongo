@@ -1,33 +1,16 @@
 import { Module } from "@nestjs/common";
 import { RouterModule } from "@nestjs/core";
-import { UsersModule } from "./users/users.module";
 import { RESOURCE } from "src/constants";
-import { TestsModule } from "./tests/tests.module";
-import { TestsChildModule } from "./tests-child/tests-child.module";
+import { v1Modules, v1Routes } from "./v1.routes";
 
 @Module({
   imports: [
-    UsersModule,
-    TestsModule,
-    TestsChildModule,
+    ...v1Modules,
     RouterModule.register([
       {
         path: RESOURCE.API + RESOURCE.V1,
         module: V1Module,
-        children: [
-          {
-            path: RESOURCE.USERS,
-            module: UsersModule,
-          },
-          {
-            path: RESOURCE.TESTS,
-            module: TestsModule,
-          },
-          {
-            path: RESOURCE.TESTS_CHILD,
-            module: TestsChildModule,
-          },
-        ],
+        children: v1Routes,
       },
     ]),
   ],

@@ -1,38 +1,36 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { TokenService } from "./middleware.verifyToken";
-import { ENV } from "src/config";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { JwtService } from "@nestjs/jwt";
+import { ENV } from "src/config";
+import { RESOURCE } from "src/constants";
+import { TokenService } from "./middleware.verifyToken";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
-    private tokenService: TokenService,
-    private reflector: Reflector,
+    private readonly jwtService: JwtService,
+    private readonly tokenService: TokenService,
+    private readonly reflector: Reflector,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(" ")[1];
 
-    return token
-      ? this.tokenService.isTokenBlacklisted()
-        ? false
-        : (() => {
-            request.user = this.jwtService.verify(token, {
-              secret: ENV.ACCESS_TOKEN_SECRET,
-            });
+    if (!token) return false;
 
-            const requiredRoles = this.reflector.get<string[]>(
-              "roles",
-              context.getHandler(),
-            );
+    const isBlacklisted = this.tokenService.isTokenBlacklisted();
+    if (isBlacklisted) return false;
 
-            if (!requiredRoles || requiredRoles.includes(request.user.role)) {
-              return true;
-            }
-          })()
-      : false;
+    request.user = this.jwtService.verify(token, { secret: ENV.JWT_SECRET });
+
+    const requiredRoles = this.reflector.get<string[]>(
+      RESOURCE.ROLES,
+      context.getHandler(),
+    );
+    if (!requiredRoles || requiredRoles.includes(request.user.role))
+      return true;
+
+    return false;
   }
 }

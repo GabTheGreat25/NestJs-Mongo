@@ -1,10 +1,10 @@
-import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-import { Document } from "mongoose";
-import { RESOURCE } from "src/constants";
-import { UploadImages } from "src/types";
-import { ENV } from "src/config";
 import * as bcrypt from "bcrypt";
+import { Document } from "mongoose";
+import { ENV } from "src/config";
+import { RESOURCE } from "src/constants";
+import { UploadImages, VerifyCode } from "src/types";
 @Schema({ timestamps: true, discriminatorKey: RESOURCE.ROLE })
 export class User extends Document {
   @ApiProperty({ description: "User Name", example: "John Doe" })
@@ -34,7 +34,7 @@ export class User extends Document {
       {
         public_id: "public_id",
         url: "url",
-        originalname: "originalname",
+        originalname: "original_name",
       },
     ],
   })
@@ -42,6 +42,24 @@ export class User extends Document {
     required: true,
   })
   image: UploadImages[];
+
+  @ApiProperty({
+    description: "Verification code",
+    example: {
+      code: "123456",
+      createdAt: "2025-10-14T13:30:00.000Z",
+    },
+    required: false,
+    type: Object,
+  })
+  @Prop({
+    type: {
+      code: { type: String, required: false, default: null },
+      createdAt: { type: Date, required: false, default: null },
+    },
+    required: false,
+  })
+  verificationCode?: VerifyCode;
 
   @ApiProperty({ description: "Deleted flag", example: false })
   @Prop({ default: false })

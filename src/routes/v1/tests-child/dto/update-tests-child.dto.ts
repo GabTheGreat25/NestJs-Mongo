@@ -1,8 +1,8 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { CreateTestsChildDto } from "./create-tests-child.dto";
 import { UploadImages } from "src/types";
+import { CreateTestsChildDto } from "./create-tests-child.dto";
 
 export class UpdateTestsChildDto extends PartialType(CreateTestsChildDto) {
   @ApiProperty({ description: "Test Parent", example: "1" })
@@ -18,11 +18,7 @@ export class UpdateTestsChildDto extends PartialType(CreateTestsChildDto) {
   @ApiProperty({
     description: "Uploaded Images",
     example: [
-      {
-        public_id: "public_id",
-        url: "url",
-        originalname: "originalname",
-      },
+      { public_id: "public_id", url: "url", originalname: "original_name" },
     ],
   })
   @IsOptional()

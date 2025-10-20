@@ -1,3 +1,3 @@
 export * from "./admin.entity";
-export * from "./employee.entity";
-export * from "./customer.entity";
+export * from "./alumni.entity";
+export * from "./student.entity";

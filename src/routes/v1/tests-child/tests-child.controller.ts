@@ -1,29 +1,31 @@
 import {
-  Controller,
-  Post,
   Body,
-  UsePipes,
-  ValidationPipe,
+  Controller,
+  Delete,
   Get,
   Param,
   Patch,
+  Post,
   Put,
-  Delete,
-  UseInterceptors,
+  Req,
   UploadedFiles,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
-import { TestsChildService } from "./tests-child.service";
-import { CreateTestsChildDto } from "./dto/create-tests-child.dto";
-import { UpdateTestsChildDto } from "./dto/update-tests-child.dto";
-import { responseHandler, multipleImages } from "src/utils";
-import { STATUSCODE, PATH, RESOURCE } from "src/constants";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { PATH, RESOURCE, STATUSCODE } from "src/constants";
+import { SessionRequest } from "src/types";
+import { multipleImages, responseHandler } from "src/utils";
+import { CreateTestsChildDto } from "./dto/create-tests-child.dto";
+import { UpdateTestsChildDto } from "./dto/update-tests-child.dto";
 import { TestsChild } from "./entities/tests-child.entity";
-import { FilesInterceptor } from "@nestjs/platform-express";
+import { TestsChildService } from "./tests-child.service";
 
 @ApiTags()
 @Controller()
@@ -84,11 +86,15 @@ export class TestsChildController {
   async createTestChild(
     @Body() createTestsChildDto: CreateTestsChildDto,
     @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: Request,
   ) {
     const uploadedImages = await multipleImages(files, []);
     createTestsChildDto.image = uploadedImages;
 
-    const data = await this.service.add(createTestsChildDto);
+    const data = await this.service.add(
+      createTestsChildDto,
+      (req as unknown as SessionRequest).session,
+    );
     return responseHandler([data], "TestChild created successfully");
   }
 
@@ -104,16 +110,26 @@ export class TestsChildController {
     @Param(RESOURCE.ID) _id: string,
     @Body() updateTestsChildDto: UpdateTestsChildDto,
     @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: Request,
   ) {
     const oldData = await this.service.getById(_id);
 
-    const uploadNewImages = await multipleImages(
-      files,
-      oldData?.image.map((image) => image.public_id) || [],
-    );
-    updateTestsChildDto.image = uploadNewImages;
+    const oldPublicIds =
+      oldData[0]?.image.map((img: { public_id: string }) => img.public_id) ||
+      [];
 
-    const data = await this.service.update(_id, updateTestsChildDto);
+    const uploadNewImages = await Promise.all(
+      files.map((file) => multipleImages([file], oldPublicIds)),
+    );
+
+    updateTestsChildDto.image = uploadNewImages.flat();
+
+    const data = await this.service.update(
+      _id,
+      updateTestsChildDto,
+      (req as unknown as SessionRequest).session,
+    );
+
     return responseHandler([data], "TestChild updated successfully");
   }
 
@@ -122,8 +138,11 @@ export class TestsChildController {
     description: "TestChild deleted successfully",
     type: TestsChild,
   })
-  async deleteTestChild(@Param(RESOURCE.ID) _id: string) {
-    const data = await this.service.deleteById(_id);
+  async deleteTestChild(@Param(RESOURCE.ID) _id: string, @Req() req: Request) {
+    const data = await this.service.deleteById(
+      _id,
+      (req as unknown as SessionRequest).session,
+    );
     return responseHandler(
       data?.deleted ? [] : [data],
       data?.deleted
@@ -137,8 +156,11 @@ export class TestsChildController {
     description: "TestChild restored successfully",
     type: TestsChild,
   })
-  async restoreTestChild(@Param(RESOURCE.ID) _id: string) {
-    const data = await this.service.restoreById(_id);
+  async restoreTestChild(@Param(RESOURCE.ID) _id: string, @Req() req: Request) {
+    const data = await this.service.restoreById(
+      _id,
+      (req as unknown as SessionRequest).session,
+    );
     return responseHandler(
       !data?.deleted ? [] : data,
       !data?.deleted
@@ -152,8 +174,14 @@ export class TestsChildController {
     description: "TestChild force deleted successfully",
     type: TestsChild,
   })
-  async forceDeleteTestChild(@Param(RESOURCE.ID) _id: string) {
-    const data = await this.service.forceDelete(_id);
+  async forceDeleteTestChild(
+    @Param(RESOURCE.ID) _id: string,
+    @Req() req: Request,
+  ) {
+    const data = await this.service.forceDelete(
+      _id,
+      (req as unknown as SessionRequest).session,
+    );
     const message = !data
       ? "No TestChild found"
       : "TestChild force deleted successfully";

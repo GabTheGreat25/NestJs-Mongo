@@ -11,11 +11,7 @@ export class CreateTestDto {
   @ApiProperty({
     description: "Uploaded Images",
     example: [
-      {
-        public_id: "public_id",
-        url: "url",
-        originalname: "originalname",
-      },
+      { public_id: "public_id", url: "url", originalname: "original_name" },
     ],
   })
   @IsOptional()

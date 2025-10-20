@@ -1,14 +1,11 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { CreateTestDto } from "./create-test.dto";
 import { UploadImages } from "src/types";
+import { CreateTestDto } from "./create-test.dto";
 
 export class UpdateTestDto extends PartialType(CreateTestDto) {
-  @ApiProperty({
-    description: "Test Message",
-    example: "Test",
-  })
+  @ApiProperty({ description: "Test Message", example: "Test" })
   @IsString()
   @IsNotEmpty()
   message: string;
@@ -16,11 +13,7 @@ export class UpdateTestDto extends PartialType(CreateTestDto) {
   @ApiProperty({
     description: "Uploaded Images",
     example: [
-      {
-        public_id: "public_id",
-        url: "url",
-        originalname: "originalname",
-      },
+      { public_id: "public_id", url: "url", originalname: "original_name" },
     ],
   })
   @IsOptional()

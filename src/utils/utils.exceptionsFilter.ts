@@ -1,7 +1,7 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
@@ -42,7 +42,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     this.logger.error(
       `HTTP Status: ${status} Error Message: ${message}`,
-      ENV.NODE_ENV !== RESOURCE.PRODUCTION ? exception.stack : "",
+      ENV.NODE_ENV === RESOURCE.PRODUCTION ? "" : exception.stack,
     );
 
     response.status(status).json(errorResponse);

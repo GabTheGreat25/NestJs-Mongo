@@ -7,8 +7,8 @@ import {
   IsString,
   MinLength,
 } from "class-validator";
-import { CreateUserDto } from "./create-user.dto";
 import { UploadImages } from "src/types";
+import { CreateUserDto } from "./create-user.dto";
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({
@@ -28,8 +28,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   email: string;
 
   @ApiProperty({
-    description: "The password of the User",
-    example: "password123",
+    description: "User Password",
+    example: "password",
   })
   @IsNotEmpty()
   @IsString()
@@ -42,7 +42,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
       {
         public_id: "public_id",
         url: "url",
-        originalname: "originalname",
+        originalname: "original_name",
       },
     ],
   })

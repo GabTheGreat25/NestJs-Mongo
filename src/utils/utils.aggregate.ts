@@ -1,19 +1,27 @@
 import { PipelineStage } from "mongoose";
-import { RESOURCE } from "src/constants";
+import { LookupOptions } from "src/types";
 
-const lookup = (
-  from: string,
-  localField: string,
-  as: string,
-  pipeline: PipelineStage[],
-): PipelineStage => ({
-  $lookup: {
-    from,
-    localField,
-    foreignField: RESOURCE._ID,
-    as,
-    pipeline: pipeline as any[],
-  },
-});
+const lookup = ({
+  from,
+  localField,
+  as,
+  pipeline = [],
+  project,
+}: LookupOptions): PipelineStage => {
+  const finalPipeline: PipelineStage[] = project
+    ? [...pipeline, { $project: project }]
+    : pipeline;
+
+  return {
+    $lookup: {
+      from,
+      let: { localFieldValue: `$${localField}` },
+      pipeline: finalPipeline as NonNullable<
+        PipelineStage.Lookup["$lookup"]["pipeline"]
+      >,
+      as,
+    },
+  };
+};
 
 export { lookup };
